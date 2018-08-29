@@ -28,14 +28,14 @@ import javax.swing.WindowConstants;
 public class MAIN_GR extends javax.swing.JFrame {
 
     private String[][] LB = {{"Nodes", "Arcs", "Technologies", "Lines", "Years", "Fuels", "Time Slice"},
-    {"N", "A", "T", "L", "Y", "F", "TS"}};
+    //{"N", "A", "T", "L", "Y", "F", "TS"}};
+    {"53", "A", "14", "L", "366", "9", "24"}};
     private final String[] HELP = {"Nodes", "Arcs", "Technologies", "Lines", "Years", "Fuels", "Time Slice"};
 
     private final Font FONT = new Font("Dialog", 0, 16);
 
     public MAIN_GR() {
         initComponents();
-        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
@@ -49,9 +49,8 @@ public class MAIN_GR extends javax.swing.JFrame {
         jPanel_Form = new JPanel(new GridLayout(0, 2));
 
         for (int x = 0; x < jLabel.length; x++) {
-            jLabel[x] = new JLabel(LB[0][x]);
+            jLabel[x] = new JLabel(LB[0][x], SwingConstants.CENTER);
             jLabel[x].setFont(FONT);
-            jLabel[x].setHorizontalAlignment(SwingConstants.CENTER);
             jPanel_Form.add(jLabel[x]);
 
             jTextField[x] = new JTextField(LB[1][x]);
@@ -94,6 +93,7 @@ public class MAIN_GR extends javax.swing.JFrame {
         add(JP_ALL);
 
         pack();
+        setLocationRelativeTo(null);
     }
 
     private void jButton_ContinueActionPerformed() {
