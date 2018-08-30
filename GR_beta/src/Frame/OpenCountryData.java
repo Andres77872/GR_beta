@@ -6,9 +6,7 @@
 package Frame;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +41,6 @@ public class OpenCountryData extends javax.swing.JFrame {
      * Creates new form Abrir
      */
     private File FILE, FileMap, FileShortName, FileFullName, FileTechName, FileFuelName;
-    private File[] FileList;
     private boolean AllOK = false;
     private final int Nodes, Tech, TS, Years, Fuel;
 
@@ -68,7 +65,7 @@ public class OpenCountryData extends javax.swing.JFrame {
         "Initial Generation Capacity",
         "Fuel Importation Cost"};
 
-    public final ArrayList<String> GR_NAME = new ArrayList<>(Arrays.asList(new String[]{
+    public static final ArrayList<String> GR_NAME = new ArrayList<>(Arrays.asList(new String[]{
         "Dem",
         "Cap",
         "NewCap",
@@ -91,8 +88,6 @@ public class OpenCountryData extends javax.swing.JFrame {
 
     private final String[] LB = {"MAP", "Short Name", "Full Name", "Tech Name", "Fuel Name"};
 
-    private ArrayList<String> TECH_NAME;
-
     public OpenCountryData(int Nodes, int Tech, int TS, int Years, int Fuel) {
         initComponents();
         this.Nodes = Nodes;
@@ -104,8 +99,6 @@ public class OpenCountryData extends javax.swing.JFrame {
     }
 
     private void INI() {
-
-        TECH_NAME = new ArrayList<>();
 
         int ALL_TS = this.TS * this.Years;
         jTextArea1.setText("Nodes size:\t" + Nodes + "\n");

@@ -5,6 +5,9 @@
  */
 package Frame;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,11 +19,21 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.WindowConstants;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,30 +44,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
-    /**
-     * Creates new form OpenDataToDisplay
-     */
-    private final String[] GRName = {
-        "Dem",
-        "Cap",
-        "NewCap",
-        "Gen",
-        "InvCos",
-        "ManCos",
-        "OpeCos",
-        "PolCos",
-        "GHGEmi",
-        "WatCon",
-        "WatWit",
-        "InvCapEmp",
-        "ManCapEmp",
-        "OpeCapEmp",
-        "FueCapEmp",
-        "RetCapEmp",
-        "EneMarPri",
-        "ExiCap",
-        "FueCos"
-    };
     private JLabel[][] jLabel_DataDisplay;
     private File FileList[];
     public static ArrayList<String> GR_NAME, TECH_NAME, FUEL_NAME;
@@ -72,9 +61,10 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
     private int[] FilesLoaded = new int[19];
 
+    private String[] LB = {"Energy System", "Economic Balance", "Environmental Impact", "Social Approach"};
+
     public OpenDataToDisplay(File FileTechName, File FileFuelName, File FileMap, File FileFullName, File FileShortName, int Nodes, int TS, int Years, int Tech) {
         initComponents();
-        setLocationRelativeTo(null);
         this.Nodes = Nodes;
         this.TS = TS;
         this.Years = Years;
@@ -89,9 +79,7 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
     private void INI(File FileTechName, File FileFuelName) {
         TECH_NAME = new ArrayList<>();
         FUEL_NAME = new ArrayList<>();
-        GR_NAME = new ArrayList<>();
-
-        GR_NAME.addAll(Arrays.asList(GRName));
+        GR_NAME = new ArrayList<>(OpenCountryData.GR_NAME);
 
         BufferedReader BR = null;
         try {
@@ -119,9 +107,9 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
         jLabel_DataDisplay = new JLabel[19][3];
 
         for (int x = 0; x < jLabel_DataDisplay.length; x++) {
-            jLabel_DataDisplay[x][0] = new JLabel(GRName[x]);
+            jLabel_DataDisplay[x][0] = new JLabel(GR_NAME.get(x));
             jLabel_DataDisplay[x][1] = new JLabel(new ImageIcon(getClass().getResource("/ICON/NULL.png")));
-            jLabel_DataDisplay[x][2] = new JLabel("null");
+            jLabel_DataDisplay[x][2] = new JLabel("No selected");
             jLabel_DataDisplay[x][2].setHorizontalAlignment(JLabel.CENTER);
         }
     }
@@ -129,179 +117,126 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
     int PareceNoSerParaNadaPeroSinEstoNoFunciona = 1;
 
     private void setLabels(int[] D) {
-        jPanel1.removeAll();
+        jPanel_Var.removeAll();
         //Name
-        jPanel1.add(new JLabel("==Name=="));
+        jPanel_Var.add(new JLabel("==Name=="));
         //Icon
-        jPanel1.add(new JLabel("==Is selected=="));
+        jPanel_Var.add(new JLabel("==Is selected=="));
         //Thech size
-        jPanel1.add(new JLabel("==Files loaded=="));
+        jPanel_Var.add(new JLabel("==Files loaded=="));
 
         //for (JLabel[] LB : jLabel_DataDisplay) {
         for (int x = 0; x < D.length; x++) {
             //Name
-            jPanel1.add(jLabel_DataDisplay[D[x]][0]);
+            jPanel_Var.add(jLabel_DataDisplay[D[x]][0]);
             //Icon
-            jPanel1.add(jLabel_DataDisplay[D[x]][1]);
+            jPanel_Var.add(jLabel_DataDisplay[D[x]][1]);
             //Thech size
-            jPanel1.add(jLabel_DataDisplay[D[x]][2]);
+            jPanel_Var.add(jLabel_DataDisplay[D[x]][2]);
 
         }
         this.setSize(this.getSize().width, this.getSize().height + PareceNoSerParaNadaPeroSinEstoNoFunciona);
         PareceNoSerParaNadaPeroSinEstoNoFunciona *= -1;
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        buttonGroup_ToggleButtons = new javax.swing.ButtonGroup();
-        jToolBar1 = new javax.swing.JToolBar();
-        jPanel1 = new javax.swing.JPanel();
-        jButton_SelectFile = new javax.swing.JButton();
-        jTextField_FilePath = new javax.swing.JTextField();
-        jButton_Acept = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
-        jPanel2 = new javax.swing.JPanel();
-        jToggleButton_EnergySystem = new javax.swing.JToggleButton();
-        jToggleButton_EconomicBalance = new javax.swing.JToggleButton();
-        jToggleButton_EnvironmentalImpact = new javax.swing.JToggleButton();
-        jToggleButtonSocialApproach = new javax.swing.JToggleButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        buttonGroup_ToggleButtons = new ButtonGroup();
+        jToolBar1 = new JToolBar();
+        jPanel_Var = new JPanel(new GridLayout(0, 3));
+        jButton_OpenFile = new JButton("Select File");
+        jTextField_FilePath = new JTextField("File Path");
+        jButton_Acept = new JButton("Acept");
+        jProgressBar1 = new JProgressBar();
+        jPanel_Buttons = new JPanel(new GridLayout(2, 2));
+        jTextPane_LOG = new JTextPane();
+        jScrollPane2 = new JScrollPane(jTextPane_LOG);
+        jLabel = new JLabel();
+        jButton_Help = new JButton("Help");
+        jToggleButtons = new JToggleButton[4];
 
         jToolBar1.setRollover(true);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("DT"));
-        jPanel1.setLayout(new java.awt.GridLayout(0, 3));
+        jPanel_Var.setBorder(BorderFactory.createTitledBorder("Variables"));
 
-        jButton_SelectFile.setText("Select File");
-        jButton_SelectFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_SelectFileActionPerformed(evt);
-            }
+        jButton_OpenFile.addActionListener((evt) -> {
+            jButton_OpenFileActionPerformed();
         });
 
-        jTextField_FilePath.setText("FilePath");
-
-        jButton_Acept.setText("Acept");
         jButton_Acept.setEnabled(false);
-        jButton_Acept.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_AceptActionPerformed(evt);
-            }
+        jButton_Acept.addActionListener((evt) -> {
+            jButton_AceptActionPerformed();
         });
 
-        jPanel2.setLayout(new java.awt.GridLayout(2, 2));
+        jToggleButtons[0] = new JToggleButton(LB[0]);
+        jToggleButtons[0].setSelected(true);
+        jToggleButtons[1] = new JToggleButton(LB[1]);
+        jToggleButtons[2] = new JToggleButton(LB[2]);
+        jToggleButtons[3] = new JToggleButton(LB[3]);
+        for (JToggleButton TB : jToggleButtons) {
+            TB.addActionListener((evt) -> {
+                EVT_jToggleButton(TB);
+            });
+            buttonGroup_ToggleButtons.add(TB);
+            jPanel_Buttons.add(TB);
+        }
 
-        buttonGroup_ToggleButtons.add(jToggleButton_EnergySystem);
-        jToggleButton_EnergySystem.setSelected(true);
-        jToggleButton_EnergySystem.setText("Energy System");
-        jToggleButton_EnergySystem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton_EnergySystemActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jToggleButton_EnergySystem);
+        jLabel.setText("Upload data to display");
 
-        buttonGroup_ToggleButtons.add(jToggleButton_EconomicBalance);
-        jToggleButton_EconomicBalance.setText("Economic Balance");
-        jToggleButton_EconomicBalance.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton_EconomicBalanceActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jToggleButton_EconomicBalance);
+        JPanel JP = new JPanel();
+        JP.setLayout(new BoxLayout(JP, BoxLayout.PAGE_AXIS));
+        JP.add(jPanel_Var);
+        JP.add(jProgressBar1);
+        JP.add(jButton_Acept);
 
-        buttonGroup_ToggleButtons.add(jToggleButton_EnvironmentalImpact);
-        jToggleButton_EnvironmentalImpact.setText("Environmental Impact");
-        jToggleButton_EnvironmentalImpact.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton_EnvironmentalImpactActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jToggleButton_EnvironmentalImpact);
+        JPanel JP2 = new JPanel();
+        JP2.setLayout(new BoxLayout(JP2, BoxLayout.LINE_AXIS));
+        JP2.add(jButton_OpenFile);
+        jTextField_FilePath.setMaximumSize(new Dimension(Integer.MAX_VALUE, jTextField_FilePath.getPreferredSize().height));
+        JP2.add(jTextField_FilePath);
+        JP2.add(jButton_Help);
 
-        buttonGroup_ToggleButtons.add(jToggleButtonSocialApproach);
-        jToggleButtonSocialApproach.setText("Social Approach");
-        jToggleButtonSocialApproach.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButtonSocialApproachActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jToggleButtonSocialApproach);
+        JPanel JP3 = new JPanel();
+        JP3.setLayout(new BoxLayout(JP3, BoxLayout.PAGE_AXIS));
 
-        jTextPane1.setEditable(false);
-        jTextPane1.setContentType(""); // NOI18N
-        jScrollPane2.setViewportView(jTextPane1);
+        JP3.add(jLabel);
+        JP3.add(JP2);
+        jPanel_Buttons.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        JP3.add(jPanel_Buttons);
+        JP3.add(jScrollPane2);
 
-        jLabel2.setText("Upload data to display");
+        JPanel JP_ALL = new JPanel();
+        JP_ALL.setLayout(new BoxLayout(JP_ALL, BoxLayout.LINE_AXIS));
 
-        jButton1.setText("Help");
+        JP_ALL.add(JP);
+        JP_ALL.add(JP3);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(jButton_Acept, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                        .addGap(190, 190, 190))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton_SelectFile)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_FilePath)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton_Acept))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton_SelectFile)
-                            .addComponent(jTextField_FilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)))
-                .addGap(12, 12, 12))
-        );
+        add(JP_ALL);
+
+        setPreferredSize(new Dimension(800, 400));
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void jButton_SelectFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_SelectFileActionPerformed
+    private void EVT_jToggleButton(JToggleButton TB) {
+        switch (Arrays.asList(jToggleButtons).indexOf(TB)) {
+            case 0:
+                setLabels(new int[]{0, 17, 1, 2, 3});
+                break;
+            case 1:
+                setLabels(new int[]{4, 5, 6, 18, 7});
+                break;
+            case 2:
+                setLabels(new int[]{8, 9, 10});
+                break;
+            case 3:
+                setLabels(new int[]{11, 12, 13, 14, 15, 16});
+                break;
+        }
+    }
+
+    private void jButton_OpenFileActionPerformed() {
         JFileChooser JFC = new JFileChooser();
         JFC.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         JFC.setMultiSelectionEnabled(true);
@@ -323,29 +258,13 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
                 new Thread(this, "FILES").start();
             }
         }
-    }//GEN-LAST:event_jButton_SelectFileActionPerformed
+    }
 
-    private void jToggleButton_EnergySystemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton_EnergySystemActionPerformed
-        setLabels(new int[]{0, 17, 1, 2, 3});
-    }//GEN-LAST:event_jToggleButton_EnergySystemActionPerformed
-
-    private void jToggleButton_EconomicBalanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton_EconomicBalanceActionPerformed
-        setLabels(new int[]{4, 5, 6, 18, 7});
-    }//GEN-LAST:event_jToggleButton_EconomicBalanceActionPerformed
-
-    private void jToggleButton_EnvironmentalImpactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton_EnvironmentalImpactActionPerformed
-        setLabels(new int[]{8, 9, 10});
-    }//GEN-LAST:event_jToggleButton_EnvironmentalImpactActionPerformed
-
-    private void jToggleButtonSocialApproachActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonSocialApproachActionPerformed
-        setLabels(new int[]{11, 12, 13, 14, 15, 16});
-    }//GEN-LAST:event_jToggleButtonSocialApproachActionPerformed
-
-    private void jButton_AceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AceptActionPerformed
+    private void jButton_AceptActionPerformed() {
         if (AllOK) {
             new Visualizer(FileMap, FileShortName, FileFullName, Nodes, Years, Tech, TS).setVisible(true);
         }
-    }//GEN-LAST:event_jButton_AceptActionPerformed
+    }
 
     int Progress = 0, TechCont = 0;
     String TMP = "NULL";
@@ -372,7 +291,7 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
         AllOK = true;
         AllOK_E = new boolean[19];
         FilesLoaded = new int[19];
-        jTextPane1.setText("");
+        jTextPane_LOG.setText("");
         for (File Var : FileList) {
             jProgressBar1.setValue(Progress);
             Progress++;
@@ -399,7 +318,7 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
         switch (Name) {
             case "ExiCap.txt":
-                
+
                 break;
             case "FueCos.txt":
 
@@ -439,9 +358,9 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
                         } else {
                             OK = false;
                             CHECK_update(GR_NAME.indexOf(V), true);
-                            jTextPane1.setText(jTextPane1.getText() + "ERROR:\t" + Var.getName()
+                            jTextPane_LOG.setText(jTextPane_LOG.getText() + "ERROR:\t" + Var.getName()
                                     + "\tThe document must have " + (TS * Years) + " columns\n");
-                            jTextPane1.setCaretPosition(jTextPane1.getText().length());
+                            jTextPane_LOG.setCaretPosition(jTextPane_LOG.getText().length());
                             break;
                         }
                     }
@@ -449,26 +368,26 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
                         int VarIDX = GR_NAME.indexOf(V);
                         FilesLoaded[VarIDX]++;
                         CHECK_update(VarIDX, false);
-                        jTextPane1.setText(jTextPane1.getText() + Name + "\t\twas loaded\n");
-                        jTextPane1.setCaretPosition(jTextPane1.getText().length());
+                        jTextPane_LOG.setText(jTextPane_LOG.getText() + Name + "\t\twas loaded\n");
+                        jTextPane_LOG.setCaretPosition(jTextPane_LOG.getText().length());
                     }
                 } else {
                     CHECK_update(GR_NAME.indexOf(V), true);
-                    jTextPane1.setText(jTextPane1.getText() + "ERROR:\t" + Var.getName()
+                    jTextPane_LOG.setText(jTextPane_LOG.getText() + "ERROR:\t" + Var.getName()
                             + "\tThe document must have " + Nodes + " rows\n");
-                    jTextPane1.setCaretPosition(jTextPane1.getText().length());
+                    jTextPane_LOG.setCaretPosition(jTextPane_LOG.getText().length());
                 }
 
             }
         } catch (IOException E) {
             CHECK_update(GR_NAME.indexOf(V), true);
-            jTextPane1.setText(jTextPane1.getText() + "ERROR:\t" + Var.getName() + "\tIOException\n");
+            jTextPane_LOG.setText(jTextPane_LOG.getText() + "ERROR:\t" + Var.getName() + "\tIOException\n");
         } catch (NumberFormatException E) {
             CHECK_update(GR_NAME.indexOf(V), true);
-            jTextPane1.setText(jTextPane1.getText() + "ERROR:\t" + Var.getName() + "\tNumberFormatException\n");
+            jTextPane_LOG.setText(jTextPane_LOG.getText() + "ERROR:\t" + Var.getName() + "\tNumberFormatException\n");
         } catch (ArrayIndexOutOfBoundsException E) {
             CHECK_update(GR_NAME.indexOf(V), true);
-            jTextPane1.setText(jTextPane1.getText() + "ERROR:\t" + "The file " + Var.getName() + " don't have a correct matriz. " + "\tArrayIndexOutOfBoundsException\n");
+            jTextPane_LOG.setText(jTextPane_LOG.getText() + "ERROR:\t" + "The file " + Var.getName() + " don't have a correct matriz. " + "\tArrayIndexOutOfBoundsException\n");
         }
     }
 
@@ -624,22 +543,17 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
         jLabel_DataDisplay[Var][2].setText(String.valueOf(FilesLoaded[Var]));
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup_ToggleButtons;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton_Help;
     private javax.swing.JButton jButton_Acept;
-    private javax.swing.JButton jButton_SelectFile;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton jButton_OpenFile;
+    private javax.swing.JLabel jLabel;
+    private javax.swing.JPanel jPanel_Var;
+    private javax.swing.JPanel jPanel_Buttons;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField_FilePath;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JToggleButton jToggleButtonSocialApproach;
-    private javax.swing.JToggleButton jToggleButton_EconomicBalance;
-    private javax.swing.JToggleButton jToggleButton_EnergySystem;
-    private javax.swing.JToggleButton jToggleButton_EnvironmentalImpact;
+    private javax.swing.JTextPane jTextPane_LOG;
+    private JToggleButton[] jToggleButtons;
     private javax.swing.JToolBar jToolBar1;
-    // End of variables declaration//GEN-END:variables
 }
