@@ -25,13 +25,23 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainCategoryPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.CombinedRangeCategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.AreaRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.DefaultCategoryItemRenderer;
+import org.jfree.chart.renderer.category.GanttRenderer;
+import org.jfree.chart.renderer.category.IntervalBarRenderer;
+import org.jfree.chart.renderer.category.LevelRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.LineRenderer3D;
+import org.jfree.chart.renderer.category.MinMaxCategoryRenderer;
+import org.jfree.chart.renderer.category.StatisticalLineAndShapeRenderer;
+import org.jfree.chart.renderer.category.WaterfallBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import org.jfree.data.general.DefaultPieDataset;
@@ -94,8 +104,8 @@ public class ChartView extends JFrame {
         INI(CP);
     }
 
-    public ChartView(long[][][] DATA, String[][] DATA_NAME, String[][] PLOT_NAME, String Title, int ChartType) throws HeadlessException {
-        INI(getMulipleChart(DATA, DATA_NAME, PLOT_NAME, Title, ChartType));
+    public ChartView(long[][][] DATA, String[][] DATA_NAME, String[][] PLOT_NAME, String Title, int ChartType, int Format) throws HeadlessException {
+        INI(getMulipleChart(DATA, DATA_NAME, PLOT_NAME, Title, ChartType, Format));
     }
 
     private ChartPanel getPieChart(long[] DATA, String[] DATA_NAME, String Title) {
@@ -207,8 +217,10 @@ public class ChartView extends JFrame {
         return new ChartPanel(ChartFactory.createMultiplePieChart(Title, DPD, TableOrder.BY_COLUMN, true, true, false));
     }
 
-    private ChartPanel getMulipleChart(long[][][] DATA, String[][] DATA_NAME, String[][] PLOT_NAME, String Title, int ChartType) {
+    private ChartPanel getMulipleChart(long[][][] DATA, String[][] DATA_NAME, String[][] PLOT_NAME, String Title, int ChartType, int Format) {
         CombinedDomainCategoryPlot cdcp = new CombinedDomainCategoryPlot();
+        CombinedDomainXYPlot cdxyp = new CombinedDomainXYPlot();
+
         DefaultCategoryDataset[] DCD = new DefaultCategoryDataset[DATA.length];
         DefaultCategoryDataset DCD_FULL = new DefaultCategoryDataset();
         System.out.println(DCD.length);
@@ -216,23 +228,28 @@ public class ChartView extends JFrame {
             DCD[x] = new DefaultCategoryDataset();
             for (int y = 0; y < DATA[x].length; y++) {
                 for (int z = 0; z < DATA[x][y].length; z++) {
-                    DCD[x].addValue(DATA[x][y][z], PLOT_NAME[x][y], DATA_NAME[x][z]);
-                    DCD_FULL.addValue(DATA[x][y][z], PLOT_NAME[x][y], DATA_NAME[x][z]);
+                    if (Format == Format_MultipleChart) {
+                        DCD[x].addValue(DATA[x][y][z], PLOT_NAME[x][y], DATA_NAME[x][z]);
+                        DCD_FULL.addValue(DATA[x][y][z], PLOT_NAME[x][y], DATA_NAME[x][z]);
+                    } else {
+                        DCD_FULL.addValue(DATA[x][y][z], PLOT_NAME[x][y], DATA_NAME[x][z]);
+                    }
                 }
             }
         }
-
-        for (DefaultCategoryDataset D : DCD) {
-            switch (ChartType) {
-                case 1:
-                    cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new LineAndShapeRenderer(true, true)));
-                    break;
-                case 2:
-                    cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new BarRenderer()));
-                    break;
-                case 3:
-                    cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new AreaRenderer()));
-                    break;
+        if (Format == Format_MultipleChart) {
+            for (DefaultCategoryDataset D : DCD) {
+                switch (ChartType) {
+                    case 1:
+                        cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new LineAndShapeRenderer(true, true)));
+                        break;
+                    case 2:
+                        cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new BarRenderer()));
+                        break;
+                    case 3:
+                        cdcp.add(new CategoryPlot(D, null, new NumberAxis("Value"), new AreaRenderer()));
+                        break;
+                }
             }
         }
         switch (ChartType) {
@@ -243,6 +260,8 @@ public class ChartView extends JFrame {
                 cdcp.add(new CategoryPlot(DCD_FULL, null, new NumberAxis("Value"), new BarRenderer()));
                 break;
             case 3:
+                AreaRenderer S = new AreaRenderer();
+                S.setAutoPopulateSeriesFillPaint(true);
                 cdcp.add(new CategoryPlot(DCD_FULL, null, new NumberAxis("Value"), new AreaRenderer()));
                 break;
         }

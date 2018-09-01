@@ -5,6 +5,7 @@
  */
 package Frame;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -44,9 +45,10 @@ public class Visualizer extends javax.swing.JFrame {
     public static int REG = 0, TS, TS_MIN, TS_MAX;
 
     public Visualizer(File Map, File ShortName, File FullName, int Nodes, int Years, int Tech, int TS) {
-        initComponents();
+        Initialize();
         Visualizer.TS = TS;
         INI(Map, ShortName, FullName, Nodes, Years, TS);
+        setLayout();
     }
 
     private void INI(File Map, File ShortName, File FullName, int Nodes, int Years, int TS) {
@@ -65,7 +67,6 @@ public class Visualizer extends javax.swing.JFrame {
                 }
             }
         }
-        setSize(1200, 600);
 
         for (int x = 0; x < Years; x++) {
             jComboBox_Years.addItem("Year: " + (x + 1));
@@ -101,39 +102,26 @@ public class Visualizer extends javax.swing.JFrame {
                     ArrayList<String> COL_LST;
                     int Year = jComboBox_Years.getSelectedIndex();
 
-                    System.out.println(TS);
-
                     for (int x = 0; x < OpenDataToDisplay.DATA.get(VarID).get(REG).size(); x++) {
                         ROW.add(Arrays.copyOfRange(OpenDataToDisplay.DATA.get(VarID).get(REG).get(x),
                                 (Year * TS) + TS_MIN, ((Year + 1) * TS) - (TS - TS_MAX)));
                     }
-                    COL_LST = OpenDataToDisplay.DATA_NAME.get(VarID).get(REG);
 
-                    int _TS = TS_MAX, _TECH = ROW.size();
+                    COL_LST = (ArrayList<String>) OpenDataToDisplay.DATA_NAME.get(VarID).get(REG).clone();
+                    COL_LST.add(0, "TS");
 
-                    Object[] COL = new Object[COL_LST.size() + 1];
+                    int _TECH = ROW.size();
+
                     Object[][] ROW_F = new Object[ROW.get(0).length][];
 
-                    String ZERO = "";
-
-                    while (ZERO.length() != String.valueOf(_TS).length()) {
-                        ZERO += "0";
-                    }
-
                     for (int x = 0; x < ROW_F.length; x++) {
-                        ROW_F[x] = new Object[_TECH + 1];
-                        ROW_F[x][0] = ZERO.substring(String.valueOf(x + TS_MIN + 1).length()) + (x + TS_MIN + 1);
-                        for (int y = 1; y <= _TECH; y++) {
-                            ROW_F[x][y] = ROW.get(y - 1)[x];
+                        ROW_F[x] = new Object[_TECH];
+                        for (int y = 0; y < _TECH; y++) {
+                            ROW_F[x][y] = ROW.get(y)[x];
                         }
                     }
 
-                    COL[0] = "TS";
-                    for (int x = 1; x < COL.length; x++) {
-                        COL[x] = COL_LST.get(x - 1);
-                    }
-
-                    jTabbedPane_TableShow.addTab(V.getText(), new TAB(ROW_F, COL, M.FullName_Array[Visualizer.REG]));
+                    jTabbedPane_TableShow.addTab(V.getText(), new TAB(ROW_F, COL_LST.toArray(), M.FullName_Array[Visualizer.REG]));
                 }
             }
         }
@@ -178,27 +166,27 @@ public class Visualizer extends javax.swing.JFrame {
         for (int x = 0; x < 4; x++) {
             jPanel_EnergySystem.add(jCheckBox_VAR[x]);
         }
-        jTabbedPane_Var.addTab("Energy System", jPanel_EnergySystem);
 
         jPanel_EconomicBalance.add(jCheckBox_VAR[18]);
         jPanel_EconomicBalance.setLayout(new GridLayout(0, 2));
         for (int x = 4; x < 8; x++) {
             jPanel_EconomicBalance.add(jCheckBox_VAR[x]);
         }
-        jTabbedPane_Var.addTab("Economic Balance", jPanel_EconomicBalance);
 
         jPanel_EnviromentalImpact.setLayout(new GridLayout(0, 2));
         for (int x = 8; x < 11; x++) {
             jPanel_EnviromentalImpact.add(jCheckBox_VAR[x]);
         }
-        jTabbedPane_Var.addTab("Enviromental Impact", jPanel_EnviromentalImpact);
 
         jPanel_SocialApproach.setLayout(new GridLayout(0, 2));
         for (int x = 11; x < 17; x++) {
             jPanel_SocialApproach.add(jCheckBox_VAR[x]);
         }
+
+        jTabbedPane_Var.addTab("Energy System", jPanel_EnergySystem);
+        jTabbedPane_Var.addTab("Economic Balance", jPanel_EconomicBalance);
+        jTabbedPane_Var.addTab("Enviromental Impact", jPanel_EnviromentalImpact);
         jTabbedPane_Var.addTab("Social Approach", jPanel_SocialApproach);
-        jTabbedPane_Var.setMaximumSize(new Dimension(Integer.MAX_VALUE, jTabbedPane_Var.getPreferredSize().height));
     }
 
     private void addEeventCheckBox() {
@@ -224,7 +212,7 @@ public class Visualizer extends javax.swing.JFrame {
         jCheckBox_VAR[Var].setEnabled(false);
     }
 
-    private void initComponents() {
+    private void Initialize() {
 
         jSplitPane_ALL = new JSplitPane();
         jPanel_JS_R = new JPanel();
@@ -236,11 +224,11 @@ public class Visualizer extends javax.swing.JFrame {
         jComboBox_Years = new JComboBox<>();
         jLabel_TS_MIN = new JLabel("TS MIN");
         jSlider_TS_MIN = new JSlider();
-        jTextField_MIN = new JTextField();
+        jTextField_MIN = new JTextField(4);
         jLabel_TS_MAX = new JLabel("TS MAX");
         jSlider_TS_MAX = new JSlider();
-        jTextField_MAX = new JTextField();
-        jTextField_TSTOTAL = new JTextField();
+        jTextField_MAX = new JTextField(4);
+        jTextField_TSTOTAL = new JTextField(4);
         jLabel_TotalTS = new JLabel("Total TS");
         jButton_Apply = new JButton("Apply");
         jButton_Preview = new JButton("Preview");
@@ -250,8 +238,6 @@ public class Visualizer extends javax.swing.JFrame {
         jScrollPane1_MAP = new JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jSplitPane_ALL.setDividerLocation(720);
 
         jPanel_TSControl.setBorder(javax.swing.BorderFactory.createTitledBorder("TS control"));
 
@@ -295,30 +281,29 @@ public class Visualizer extends javax.swing.JFrame {
             jButton_CompareActionPerformed();
         });
 
-        jSplitPane_ALL.setRightComponent(jPanel_JS_R);
-        jSplitPane_ALL.setLeftComponent(jScrollPane1_MAP);
+    }
+
+    private void setLayout() {
 
         jPanel_TSControl.setLayout(new BoxLayout(jPanel_TSControl, BoxLayout.PAGE_AXIS));
 
         JPanel JP_Y = new JPanel();
-        JP_Y.setLayout(new BoxLayout(JP_Y, BoxLayout.LINE_AXIS));
         JP_Y.add(jLabel_Year);
         JP_Y.add(jComboBox_Years);
         JP_Y.add(jButton_Apply);
         JP_Y.add(jLabel_TotalTS);
+
         JP_Y.add(jTextField_TSTOTAL);
         jPanel_TSControl.add(JP_Y);
-        JPanel JP_TS_MIN = new JPanel();
-        JP_TS_MIN.setLayout(new BoxLayout(JP_TS_MIN, BoxLayout.LINE_AXIS));
-        JP_TS_MIN.add(jLabel_TS_MIN);
+        JPanel JP_TS_MIN = new JPanel(new BorderLayout(8, 8));
+        JP_TS_MIN.add(jLabel_TS_MIN, BorderLayout.LINE_START);
         JP_TS_MIN.add(jSlider_TS_MIN);
-        JP_TS_MIN.add(jTextField_MIN);
+        JP_TS_MIN.add(jTextField_MIN, BorderLayout.LINE_END);
         jPanel_TSControl.add(JP_TS_MIN);
-        JPanel JP_TS_MAX = new JPanel();
-        JP_TS_MAX.setLayout(new BoxLayout(JP_TS_MAX, BoxLayout.LINE_AXIS));
-        JP_TS_MAX.add(jLabel_TS_MAX);
+        JPanel JP_TS_MAX = new JPanel(new BorderLayout(8, 8));
+        JP_TS_MAX.add(jLabel_TS_MAX, BorderLayout.LINE_START);
         JP_TS_MAX.add(jSlider_TS_MAX);
-        JP_TS_MAX.add(jTextField_MAX);
+        JP_TS_MAX.add(jTextField_MAX, BorderLayout.LINE_END);
         jPanel_TSControl.add(JP_TS_MAX);
         jPanel_TSControl.setMaximumSize(new Dimension(Integer.MAX_VALUE, jPanel_TSControl.getPreferredSize().height));
         JPanel JP_Chart = new JPanel();
@@ -326,19 +311,26 @@ public class Visualizer extends javax.swing.JFrame {
         JP_Chart.add(jLabel_ChartType);
         JP_Chart.add(jComboBox_ChartType);
         JP_Chart.add(jButton_Preview);
+
         JP_Chart.setMaximumSize(new Dimension(Integer.MAX_VALUE, JP_Chart.getPreferredSize().height));
         jPanel_DATA.setLayout(new BoxLayout(jPanel_DATA, BoxLayout.PAGE_AXIS));
         jPanel_DATA.add(jPanel_TSControl);
         jPanel_DATA.add(JP_Chart);
         jPanel_DATA.add(jTabbedPane_TableShow);
         jPanel_DATA.add(jButton_Compare);
-        jPanel_JS_R.setLayout(new BoxLayout(jPanel_JS_R, BoxLayout.PAGE_AXIS));
-        jPanel_JS_R.add(jTabbedPane_Var);
+        jPanel_JS_R.setLayout(new BorderLayout(8, 8));
+        jPanel_JS_R.add(jTabbedPane_Var, BorderLayout.PAGE_START);
         jPanel_JS_R.add(jPanel_DATA);
 
+        jSplitPane_ALL.setDividerLocation(750);
+
+        jSplitPane_ALL.setRightComponent(jPanel_JS_R);
+        jSplitPane_ALL.setLeftComponent(jScrollPane1_MAP);
         add(jSplitPane_ALL);
 
-        pack();
+        setExtendedState(MAXIMIZED_BOTH);
+
+        setLocationRelativeTo(null);
     }
 
     private void jButton_EXAMPLEActionPerformed() {
@@ -423,7 +415,7 @@ public class Visualizer extends javax.swing.JFrame {
     private JButton jButton_Compare;
     private JButton jButton_Apply;
     public static JComboBox<String> jComboBox_ChartType;
-    private static JComboBox<String> jComboBox_Years;
+    public static JComboBox<String> jComboBox_Years;
     private JLabel jLabel_ChartType;
     private JLabel jLabel_Year;
     private JLabel jLabel_TS_MIN;

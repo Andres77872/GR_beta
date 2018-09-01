@@ -5,6 +5,7 @@
  */
 package Frame;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
@@ -61,10 +62,9 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
     private int[] FilesLoaded = new int[19];
 
-    private String[] LB = {"Energy System", "Economic Balance", "Environmental Impact", "Social Approach"};
+    private final String[] LB = {"Energy System", "Economic Balance", "Environmental Impact", "Social Approach"};
 
     public OpenDataToDisplay(File FileTechName, File FileFuelName, File FileMap, File FileFullName, File FileShortName, int Nodes, int TS, int Years, int Tech) {
-        initComponents();
         this.Nodes = Nodes;
         this.TS = TS;
         this.Years = Years;
@@ -72,8 +72,10 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
         this.FileFullName = FileFullName;
         this.FileShortName = FileShortName;
         this.FileMap = FileMap;
+        Initialize();
         INI(FileTechName, FileFuelName);
         setLabels(new int[]{0, 17, 1, 2, 3});
+        setLayout();
     }
 
     private void INI(File FileTechName, File FileFuelName) {
@@ -112,6 +114,7 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
             jLabel_DataDisplay[x][2] = new JLabel("No selected");
             jLabel_DataDisplay[x][2].setHorizontalAlignment(JLabel.CENTER);
         }
+
     }
 
     int PareceNoSerParaNadaPeroSinEstoNoFunciona = 1;
@@ -139,7 +142,7 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
         PareceNoSerParaNadaPeroSinEstoNoFunciona *= -1;
     }
 
-    private void initComponents() {
+    private void Initialize() {
         buttonGroup_ToggleButtons = new ButtonGroup();
         jToolBar1 = new JToolBar();
         jPanel_Var = new JPanel(new GridLayout(0, 3));
@@ -184,11 +187,18 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
         jLabel.setText("Upload data to display");
 
-        JPanel JP = new JPanel();
-        JP.setLayout(new BoxLayout(JP, BoxLayout.PAGE_AXIS));
+    }
+
+    private void setLayout() {
+        JPanel JP = new JPanel(new BorderLayout(8, 8));
         JP.add(jPanel_Var);
-        JP.add(jProgressBar1);
-        JP.add(jButton_Acept);
+
+        JPanel JP_AceptProgress = new JPanel(new BorderLayout());
+
+        JP_AceptProgress.add(jProgressBar1, BorderLayout.PAGE_START);
+        JP_AceptProgress.add(jButton_Acept, BorderLayout.PAGE_END);
+
+        JP.add(JP_AceptProgress, BorderLayout.PAGE_END);
 
         JPanel JP2 = new JPanel();
         JP2.setLayout(new BoxLayout(JP2, BoxLayout.LINE_AXIS));
@@ -208,15 +218,16 @@ public class OpenDataToDisplay extends javax.swing.JFrame implements Runnable {
 
         JPanel JP_ALL = new JPanel();
         JP_ALL.setLayout(new BoxLayout(JP_ALL, BoxLayout.LINE_AXIS));
+        JP_ALL.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         JP_ALL.add(JP);
         JP_ALL.add(JP3);
 
         add(JP_ALL);
 
-        setPreferredSize(new Dimension(800, 400));
-
+        setPreferredSize(new Dimension(720, 400));
         pack();
+        setLocationRelativeTo(null);
     }
 
     private void EVT_jToggleButton(JToggleButton TB) {

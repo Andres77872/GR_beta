@@ -5,10 +5,11 @@
  */
 package Frame;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -42,7 +43,6 @@ public class TAB extends JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-        ;
         };
         TBMoldel = (DefaultTableModel) JT.getModel();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -67,12 +67,10 @@ public class TAB extends JPanel {
             EVT_Button_ShowChart_Selection(REG_NAME, ChartView.Format_MultipleChart);
         });
 
-        JPanel JP = new JPanel();
+        JPanel JP = new JPanel(new GridLayout(0, 2));
 
-        JP.setLayout(new BoxLayout(JP, BoxLayout.LINE_AXIS));
-
-        JP.add(JB);
-        JP.add(JB3);
+        JP.add(JB, BorderLayout.EAST);
+        JP.add(JB3, BorderLayout.EAST);
         JP.add(JB2);
         JP.add(JB4);
 
@@ -136,8 +134,11 @@ public class TAB extends JPanel {
         int[] IDX_ROW = JT.getSelectedRows();
         int[] IDX_COL = JT.getSelectedColumns();
 
-        if (IDX_COL.length == JT.getColumnCount()) {
-            IDX_COL = Arrays.copyOfRange(JT.getSelectedColumns(), 1, JT.getColumnCount());
+        if (IDX_COL.length == JT.getColumnCount() || (IDX_COL.length == 1 && IDX_COL[0] == 0)) {
+            IDX_COL = new int[JT.getColumnCount() - 1];
+            for (int x = 0; x < IDX_COL.length; x++) {
+                IDX_COL[x] = x + 1;
+            }
         } else {
             boolean ok = true;
             for (int x : IDX_COL) {
@@ -207,21 +208,39 @@ public class TAB extends JPanel {
             }
 
             new ChartView(DATA, DATA_NAME, PLOT_NAME, "Reg: " + REG_NAME + (TabMode ? ", collection of TS for technology" : ", collection of technology for TS"),
-                    Visualizer.jComboBox_ChartType.getSelectedIndex()).setVisible(true);
+                    Visualizer.jComboBox_ChartType.getSelectedIndex(), Format).setVisible(true);
         }
     }
 
     public void changeMode() {
         if (TabMode) {
-            TBMoldel.setDataVector(ROW, COL);
+
+            Object[][] ROW_F = new Object[ROW.length][];
+
+            String ZERO = "";
+            while (ZERO.length() != String.valueOf(ROW_F.length * Visualizer.jComboBox_Years.getItemCount()).length()) {
+                ZERO += "0";
+            }
+
+            for (int x = 0; x < ROW_F.length; x++) {
+                ROW_F[x] = new Object[ROW[0].length + 1];
+
+                ROW_F[x][0] = "TS: " + ZERO.substring(String.valueOf(
+                        x + 1 + Visualizer.jComboBox_Years.getSelectedIndex() * ROW.length).length())
+                        + (x + 1 + Visualizer.jComboBox_Years.getSelectedIndex() * ROW.length);
+                for (int y = 1; y < ROW_F[x].length; y++) {
+                    ROW_F[x][y] = ROW[x][y - 1];
+                }
+            }
+            TBMoldel.setDataVector(ROW_F, COL);
         } else {
 
-            Object[][] ROW_INV = new Object[ROW[0].length - 1][];
+            Object[][] ROW_INV = new Object[ROW[0].length][];
             for (int x = 0; x < ROW_INV.length; x++) {
                 ROW_INV[x] = new Object[ROW.length + 1];
                 ROW_INV[x][0] = COL[x + 1];
                 for (int y = 1; y < ROW_INV[x].length; y++) {
-                    ROW_INV[x][y] = ROW[y - 1][x + 1];
+                    ROW_INV[x][y] = ROW[y - 1][x];
                 }
             }
 
